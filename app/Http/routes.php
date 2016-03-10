@@ -15,6 +15,11 @@ Route::get('/', function () {
     return view('welcome');
 });
 
+Route::get('search/{artist}', 'App\DiscogsController@searchArtist');
+Route::get('search/artists/{artistId}', 'App\DiscogsController@fetchArtist');
+Route::get('search/artist/{artistId}/albums', 'App\DiscogsController@fetchAlbums');
+Route::get('search/albums/{albumId}', 'App\DiscogsController@fetchAlbum');
+
 /*
 |--------------------------------------------------------------------------
 | Application Routes

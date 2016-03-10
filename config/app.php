@@ -151,10 +151,11 @@ return [
         /*
          * Application Service Providers...
          */
-        App\Providers\AppServiceProvider::class,
-        App\Providers\AuthServiceProvider::class,
-        App\Providers\EventServiceProvider::class,
-        App\Providers\RouteServiceProvider::class,
+        MusicCity\Providers\AppServiceProvider::class,
+        MusicCity\Providers\AuthServiceProvider::class,
+        MusicCity\Providers\EventServiceProvider::class,
+        MusicCity\Providers\RouteServiceProvider::class,
+        MusicCity\Providers\WebServiceProvider::class,
 
     ],
 

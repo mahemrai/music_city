@@ -30,9 +30,14 @@ return [
     ],
 
     'stripe' => [
-        'model' => App\User::class,
+        'model' => MusicCity\User::class,
         'key' => env('STRIPE_KEY'),
         'secret' => env('STRIPE_SECRET'),
     ],
+
+    'discogs' => [
+        'key' => env('DISCOGS_CONSUMER_KEY'),
+        'secret' => env('DISCOGS_CONSUMER_SECRET'),
+    ]
 
 ];
