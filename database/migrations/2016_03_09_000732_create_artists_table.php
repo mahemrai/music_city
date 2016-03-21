@@ -18,11 +18,11 @@ class CreateArtistsTable extends Migration
             $table->string('name', 100);
             $table->mediumText('bio');
             $table->string('website', 250);
-            $table->string('wiki', 250);
+            $table->string('wiki', 250)->nullable();
             $table->string('image', 500);
             $table->string('thumb', 500);
             $table->string('members', 500);
-            $table->boolean('favourite');
+            $table->boolean('favourite')->nullable();
             $table->timestamps();
         });
     }
@@ -34,6 +34,6 @@ class CreateArtistsTable extends Migration
      */
     public function down()
     {
-        //
+        Schema::drop('artists');
     }
 }

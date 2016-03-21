@@ -38,6 +38,11 @@ return [
     'discogs' => [
         'key' => env('DISCOGS_CONSUMER_KEY'),
         'secret' => env('DISCOGS_CONSUMER_SECRET'),
+    ],
+
+    'lastfm' => [
+        'key' => env('LASTFM_API_KEY'),
+        'secret' => env('LASTFM_API_SECRET')
     ]
 
 ];

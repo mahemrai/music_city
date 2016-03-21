@@ -12,7 +12,17 @@ class CreateAlbumsTable extends Migration
      */
     public function up()
     {
-        //
+        Schema::create('albums', function (Blueprint $table) {
+            $table->increments('id');
+            $table->string('discogsId', 250);
+            $table->integer('artist_id')->unsigned();
+            $table->string('title', 100);
+            $table->integer('year');
+            $table->string('image', 500);
+            $table->string('thumb', 500);
+            $table->integer('rating')->nullable();
+            $table->timestamps();
+        });
     }
 
     /**
@@ -22,6 +32,6 @@ class CreateAlbumsTable extends Migration
      */
     public function down()
     {
-        //
+        Schema::drop('albums');
     }
 }

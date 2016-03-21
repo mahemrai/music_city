@@ -15,10 +15,16 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::get('search/{artist}', 'App\DiscogsController@searchArtist');
-Route::get('search/artists/{artistId}', 'App\DiscogsController@fetchArtist');
-Route::get('search/artist/{artistId}/albums', 'App\DiscogsController@fetchAlbums');
-Route::get('search/albums/{albumId}', 'App\DiscogsController@fetchAlbum');
+Route::get('/', 'App\AppController@homePage');
+Route::post('results', 'App\AppController@results');
+
+Route::get('artists', 'App\AppController@listArtists');
+Route::get('/artists/{artistId}', 'App\ArtistController@artistInfo');
+Route::post('artists/{artistId}', 'App\ArtistController@addArtist');
+Route::get('artists/{artistId}/albums', 'App\AppController@findAlbums');
+Route::post('artists/{artistId}/albums/{albumId}', 'App\AlbumController@addAlbum');
+
+Route::get('api/artist/{artist}/similar', 'App\LastfmController@similarArtists');
 
 /*
 |--------------------------------------------------------------------------

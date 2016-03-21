@@ -78,6 +78,12 @@ return [
             'schema' => 'public',
         ],
 
+        'redis' => [
+            'host' => ('REDIS_HOST'),
+            'port' => ('REDIS_PORT'),
+            'database' => 0
+        ],
+
     ],
 
     /*

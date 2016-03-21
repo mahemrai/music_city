@@ -12,10 +12,20 @@ use GuzzleHttp\Exception\ClientException;
  */
 class DiscogsClient extends Client
 {
+    /**
+     * @var string
+     */
     protected $consumerKey;
+
+    /**
+     * @var string
+     */
     protected $consumerSecret;
+
+    /**
+     * @var string
+     */
     protected $serviceUrl = 'https://api.discogs.com/';
-    protected $client;
 
     /**
      * @param string $consumerKey
@@ -33,7 +43,8 @@ class DiscogsClient extends Client
     }
 
     /**
-     * @param string $artistId
+     * @param  int $artistId
+     * @return mixed
      */
     public function getArtistInfo($artistId)
     {
@@ -52,7 +63,8 @@ class DiscogsClient extends Client
     }
 
     /**
-     * @param string $artistId
+     * @param  int $artistId
+     * @return string
      */
     public function getArtistReleases($artistId)
     {
@@ -73,7 +85,8 @@ class DiscogsClient extends Client
     }
 
     /**
-     * @param string $releaseId
+     * @param  int $releaseId
+     * @return mixed
      */
     public function getReleaseInfo($releaseId)
     {
@@ -81,7 +94,7 @@ class DiscogsClient extends Client
             'key' => $this->consumerKey,
             'secret' => $this->consumerSecret
         ));
-        $query = $this->serviceUrl . 'releases/' . $releaseId . '?' . $params;
+        $query = $this->serviceUrl . 'masters/' . $releaseId . '?' . $params;
         
         try {
             $response = $this->get($query);
@@ -92,7 +105,9 @@ class DiscogsClient extends Client
     }
 
     /**
-     * @param string $artist
+     * @param  string $artist
+     * @param  string $type
+     * @return mixed
      */
     public function search($artist, $type)
     {
