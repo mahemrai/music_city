@@ -6,6 +6,11 @@ use MusicCity\Services\Clients\LastfmClient;
 
 use Illuminate\Support\ServiceProvider;
 
+/**
+ * @package MusicCity
+ * @uses    ServiceProvider
+ * @author  Mahendra Rai
+ */
 class WebServiceProvider extends ServiceProvider
 {
     public function register()

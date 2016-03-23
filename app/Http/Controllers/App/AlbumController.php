@@ -7,6 +7,7 @@ use MusicCity\Services\Clients\DiscogsClient;
 use MusicCity\Artist;
 use MusicCity\Album;
 use MusicCity\Track;
+use MusicCity\Repositories\AlbumRepository;
 
 use Illuminate\Http\Request;
 
@@ -23,11 +24,18 @@ class AlbumController extends Controller
     protected $client;
 
     /**
-     * @param \MusicCity\Services\Clients\Discogs\Client $client
+     * @var \MusicCity\Repositories\AlbumRepository
      */
-    public function __construct(DiscogsClient $client)
+    protected $albumRepository;
+
+    /**
+     * @param \MusicCity\Services\Clients\Discogs\Client $client
+     * @param \MusicCity\Repositories\AlbumRepository $albumRepository
+     */
+    public function __construct(DiscogsClient $client, AlbumRepository $albumRepository)
     {
         $this->client = $client;
+        $this->albumRepository = $albumRepository;
     }
 
     /**
@@ -46,26 +54,11 @@ class AlbumController extends Controller
 
         $data = json_decode($data);
 
-        $album = new Album(array(
-            'discogsId' => $albumId,
-            'artist_id' => $artist->id,
-            'title'     => $data->title,
-            'year'      => $data->year,
-            'image'     => $data->images[0]->uri,
-            'thumb'     => $data->images[0]->uri150
-        ));
-
-        if ($album->save()) {
-            foreach ($data->tracklist as $track) {
-                $track = new Track(array('title' => $track->title));
-                $tracks[] = $track;
-            }
-
-            $album->tracks()->saveMany($tracks);
-
-            return redirect('/')->with('success', 'Album added successfully.');
+        $result = $this->albumRepository->create($data, $artist->id);
+        if (!$result || count($result) == 0) {
+            return redirect('/')->with('fail', 'Album could not be added. Try again.');
         }
 
-        return redirect('/')->with('fail', 'Album could not be added. Try again.');
+        return redirect('/')->with('success', 'Album added successfully');
     }
 }

@@ -19,7 +19,8 @@ Route::get('/', 'App\AppController@homePage');
 Route::post('results', 'App\AppController@results');
 
 Route::get('artists', 'App\AppController@listArtists');
-Route::get('/artists/{artistId}', 'App\ArtistController@artistInfo');
+Route::delete('artists/{artistId}/delete', 'App\ArtistController@deleteArtist');
+Route::get('artists/{artistId}', 'App\ArtistController@artistInfo');
 Route::post('artists/{artistId}', 'App\ArtistController@addArtist');
 Route::get('artists/{artistId}/albums', 'App\AppController@findAlbums');
 Route::post('artists/{artistId}/albums/{albumId}', 'App\AlbumController@addAlbum');

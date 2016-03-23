@@ -3,7 +3,6 @@ namespace MusicCity\Repositories;
 
 interface RepositoryInterface
 {
-	public function create();
-	public function update();
-	public function delete();
+	public function create($data, $id = null);
+	public function remove($id);
 }

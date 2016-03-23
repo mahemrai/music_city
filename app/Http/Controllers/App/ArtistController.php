@@ -5,6 +5,7 @@ use Redis;
 use MusicCity\Http\Controllers\Controller;
 use MusicCity\Services\Clients\DiscogsClient;
 use MusicCity\Artist;
+use MusicCity\Repositories\ArtistRepository;
 
 use Illuminate\Http\Request;
 
@@ -20,12 +21,15 @@ class ArtistController extends Controller
      */
     protected $client;
 
+    protected $artistRepository;
+
     /**
      * @param \MusicCity\Services\Clients\DiscogsClient $client
      */
-    public function __construct(DiscogsClient $client)
+    public function __construct(DiscogsClient $client, ArtistRepository $artistRepository)
     {
         $this->client = $client;
+        $this->artistRepository = $artistRepository;
     }
 
     /**
@@ -42,19 +46,7 @@ class ArtistController extends Controller
 
         $data = json_decode($data);
 
-        $artist = new Artist();
-        $artist->discogsId = $data->id;
-        $artist->name = $data->name;
-        $artist->bio = $data->profile;
-        $artist->website = $data->urls[0];
-        $artist->image = $data->images[0]->uri;
-        $artist->thumb = $data->images[0]->uri150;
-        if (isset($data->members)) {
-            $artist->members = $artist->createMembersString($data->members);
-        }
-        $artist->favourite = 0;
-        
-        if ($artist->save()) {
+        if ($this->artistRepository->create($data)) {
             return redirect('/')->with('success', 'Artist succesfully added.');
         }
 
@@ -70,13 +62,13 @@ class ArtistController extends Controller
         return view('artist.info')->with('data', $artist);
     }
 
+    /**
+     * @param int $artistId
+     */
     public function deleteArtist($artistId)
     {
-        $artist = Artist::find($artistId);
-        foreach ($artist->albums as $album) {
-            $album->tracks()->delete();
+        if ($this->artistRepository->remove($artistId)) {
+            return redirect('/')->with('success', 'Artist successfully deleted.');
         }
-        $artist->albums()->delete();
-        $artist->delete();
     }
 }

@@ -25,6 +25,25 @@ class Artist extends Model
         'favourite'
     );
 
+    public static function boot()
+    {
+        parent::boot();
+
+        Artist::deleting(function ($artist) {
+            foreach ($artist->albums as $album) {
+                $album->tracks->each(function ($track) {
+                    if (!$track->delete()) {
+                        return false;
+                    }
+                });
+                if (!$album->delete()) {
+                    return false;
+                }
+            }
+            return true;
+        });
+    }
+
     /**
      * @return \MusicCity\Album
      */

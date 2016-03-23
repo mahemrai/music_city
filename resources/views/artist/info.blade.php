@@ -5,7 +5,14 @@
     <div class="col-xs-12">
         <div class="row">
             <div class="col-xs-12">
-                <h2>{{ $data->name }}</h2>
+                <div class="col-xs-6">
+                    <div class="col-xs-6"><h2>{{ $data->name }}</h2></div>
+                    <div class="col-xs-6">
+                        {!! Form::open(['method' => 'DELETE', 'url' => '/artists/' . $data->id . '/delete']) !!}
+                            {!! Form::submit('Delete', ['class' => 'btn btn-default']) !!}
+                        {!! Form::close() !!}
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -15,8 +22,10 @@
             </div>
 
             <div class="col-xs-6">
-                <div class="col-xs-2"><p><b>Bio</b></p></div>
-                <div class="col-xs-10"><p>{{ $data->bio }}</p></div>
+                @if (!empty($data->bio))
+                    <div class="col-xs-2"><p><b>Bio</b></p></div>
+                    <div class="col-xs-10"><p>{{ $data->bio }}</p></div>
+                @endif
                 @if (!empty($data->members))
                     <div class="col-xs-2"><p><b>Members</b></p></div>
                     <div class="col-xs-10"><p>{{ $data->members }}</p></div>
@@ -33,7 +42,7 @@
                     <p>Currently you don't have any records from this artist. Search and add a record to your collection. <a href="/artists/{{ $data->discogsId }}/albums">Click here</a></p>
                 @else
                     @foreach ($data->albums as $album)
-                        <p>{{ $album->title }}
+                        <p>{{ $album->title }} <a href="/artists/{{ $data->id }}/albums/{{ $album->id }}">View</a></p>
                     @endforeach
                 @endif
             </div>

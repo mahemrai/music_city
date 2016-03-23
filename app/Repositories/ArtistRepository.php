@@ -1,30 +1,42 @@
 <?php
 namespace MusicCity\Repositories;
 
-use Artist;
-use MusicCity\Respositories\RepositoryInterface;
+use MusicCity\Artist;
 
+/**
+ * @package MusicCity
+ * @uses    RepositoryInterface
+ * @author  Mahendra Rai
+ */
 class ArtistRepository implements RepositoryInterface
 {
-	protected $artist;
-
-	public function __construct(Artist $artist)
+    /**
+     * @param  object $data
+     * @return boolean
+     */
+	public function create($data, $id = null)
 	{
-		$this->artist = $artist;
+		$artist = new Artist();
+		$artist->discogsId = $data->id;
+		$artist->name = $data->name;
+		$artist->bio = $data->profile;
+		$artist->website = $data->urls[0];
+		$artist->image = $data->images[0]->uri;
+		$artist->thumb = $data->images[0]->uri150;
+		if (isset($data->members)) {
+			$artist->members = $artist->createMembersString($data->members);
+		}
+		$artist->favourite = 0;
+		return $artist->save();
 	}
 
-	public function create()
+    /**
+     * @param  int $artistId
+     * @return boolean
+     */
+	public function remove($artistId)
 	{
-
-	}
-
-	public function update()
-	{
-
-	}
-
-	public function delete()
-	{
-		
+		$artist = Artist::find($artistId);
+		return $artist->delete();
 	}
 }

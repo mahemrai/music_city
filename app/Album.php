@@ -23,6 +23,20 @@ class Album extends Model
         'rating'
     );
 
+    public static function boot()
+    {
+        parent::boot();
+
+        Album::deleting(function ($album) {
+            $album->tracks->each(function ($track) {
+                if (!$track->delete()) {
+                    return false;
+                }
+            });
+            return true;
+        });
+    }
+
     /**
      * @return \MusicCity\Track
      */
