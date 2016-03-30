@@ -3,6 +3,7 @@ namespace MusicCity\Providers;
 
 use MusicCity\Services\Clients\DiscogsClient;
 use MusicCity\Services\Clients\LastfmClient;
+use MusicCity\Services\Clients\SongkickClient;
 
 use Illuminate\Support\ServiceProvider;
 
@@ -21,6 +22,10 @@ class WebServiceProvider extends ServiceProvider
 
         $this->app->singleton('MusicCity\Services\Clients\LastfmClient', function ($app) {
             return new LastfmClient(config('services.lastfm.key'));
+        });
+
+        $this->app->singleton('MusicCity\Services\Clients\SongkickClient', function ($app) {
+            return new SongkickClient(config('services.songkick.key'));
         });
     }
 }

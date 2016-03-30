@@ -10,21 +10,15 @@ use GuzzleHttp\Exception\ClientException;
  * @uses    \GuzzleHttp\Client
  * @author  Mahendra Rai
  */
-class LastfmClient extends Client
+class SongkickClient extends Client
 {
     /**
      * @var string
      */
     protected $apiKey;
 
-    /**
-     * @var string
-     */
-    protected $serviceUrl = 'http://ws.audioscrobbler.com/2.0/?';
+    protected $serviceUrl = 'http://api.songkick.com/api/3.0/';
 
-    /**
-     * @param string $apiKey
-     */
     public function __construct($apiKey)
     {
         parent::__construct(array(
@@ -35,19 +29,13 @@ class LastfmClient extends Client
         $this->apiKey = $apiKey;
     }
 
-    /**
-     * @param  string $artist
-     * @return mixed
-     */
-    public function getSimilarArtists($artist)
+    public function getArtistEvents($artist)
     {
         $params = http_build_query(array(
-            'method'  => 'artist.getsimilar',
-            'artist'  => $artist,
-            'api_key' => $this->apiKey,
-            'format'  => 'json'
+            'apikey'       => $this->apiKey,
+            'artist_name'  => $artist
         ));
-        $query = $this->serviceUrl . $params;
+        $query = $this->serviceUrl . 'events.json?' . $params;
 
         try {
             $response = $this->get($query);

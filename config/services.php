@@ -43,6 +43,10 @@ return [
     'lastfm' => [
         'key' => env('LASTFM_API_KEY'),
         'secret' => env('LASTFM_API_SECRET')
+    ],
+
+    'songkick' => [
+        'key' => env('SONGKICK_API_KEY')
     ]
 
 ];

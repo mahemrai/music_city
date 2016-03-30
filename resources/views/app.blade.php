@@ -11,7 +11,9 @@
             <div class="row">
                 <div class="col-xs-12">
                     <h1>Music City</h1>
+                    <a href="/">Home</a>
                     <a href="/artists">Your Artists</a>
+                    <a href="/albums">Your Record Collection</a>
                 </div>
             </div>
 
