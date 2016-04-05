@@ -13,7 +13,7 @@ interface RepositoryInterface
 
     public function getSorted($field = null, $orderOption = null, $limit = null, $paginate = false);
 
-	public function create($data, $id = null);
+    public function create($data, $id = null);
 
-	public function remove($id);
+    public function remove($id);
 }
