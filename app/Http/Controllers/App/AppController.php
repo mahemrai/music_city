@@ -1,13 +1,13 @@
 <?php
 namespace MusicCity\Http\Controllers\App;
 
-use Redis;
+use Cache;
 
-use MusicCity\Artist;
-use MusicCity\Album;
 use MusicCity\Http\Controllers\Controller;
 use MusicCity\Services\Clients\DiscogsClient;
 use MusicCity\Services\App\ListGenerator;
+use MusicCity\Repositories\ArtistRepository;
+use MusicCity\Repositories\AlbumRepository;
 
 use Illuminate\Http\Request;
 
@@ -29,13 +29,27 @@ class AppController extends Controller
     protected $listGenerator;
 
     /**
+     * @var \MusicCity\Repositories\ArtistRepository
+     */
+    protected $artistRepository;
+
+    /**
+     * @var \MusicCity\Repositories\AlbumRepository
+     */
+    protected $albumRepository;
+
+    /**
      * @param \MusicCity\Services\Clients\DiscogsClient $client
      * @param \MusicCity\Services\App\ListGenerator $listGenerator
+     * @param \MusicCity\Repositories\ArtistRepository $artistRepository
+     * @param \MusicCity\Repositories\AlbumRepository $albumRepository
      */
-    public function __construct(DiscogsClient $client, ListGenerator $listGenerator)
+    public function __construct(DiscogsClient $client, ListGenerator $listGenerator, ArtistRepository $artistRepository, AlbumRepository $albumRepository)
     {
         $this->client = $client;
         $this->listGenerator = $listGenerator;
+        $this->artistRepository = $artistRepository;
+        $this->albumRepository = $albumRepository;
     }
 
     /**
@@ -43,8 +57,8 @@ class AppController extends Controller
      */
     public function homePage()
     {
-        $artists = Artist::orderBy('id', 'desc')->take(4)->get();
-        $albums = Album::orderBy('id', 'desc')->take(4)->get();
+        $artists = $this->artistRepository->getSorted('id', 'desc', 4);
+        $albums = $this->albumRepository->getSorted('id', 'desc', 4);
         $data = array(
             'recentArtists' => $artists,
             'recentRecords' => $albums
@@ -62,10 +76,10 @@ class AppController extends Controller
             'artist' => 'required'
         ));
 
-        $data = Redis::get('search:artist:' . $request->artist);
+        $data = Cache::get('search:artist:' . $request->artist);
         if (is_null($data)) {
             $data = $this->client->search($request->artist, 'artist');
-            (!$data) ?: Redis::set('search:artist:' . $request->artist, $data);
+            (!$data) ?: Cache::put('search:artist:' . $request->artist, $data, 60);
         }
 
         return view('app.results')->with('data', json_decode($data));
@@ -77,10 +91,10 @@ class AppController extends Controller
      */
     public function findAlbums($artistId)
     {
-        $data = Redis::get('albums:artist:' . $artistId);
+        $data = Cache::get('albums:artist:' . $artistId);
         if (is_null($data)) {
             $data = $this->client->getArtistReleases((int) $artistId);
-            (!$data) ?: Redis::set('albums:artist:' . $artistId, $data);
+            (!$data) ?: Cache::put('albums:artist:' . $artistId, $data, 60);
         }
 
         $data = array(
@@ -96,8 +110,17 @@ class AppController extends Controller
      */
     public function listArtists()
     {
-        $artists = Artist::orderBy('name', 'asc')->get();
+        $artists = $this->artistRepository->getSorted('name', 'asc');
         $list = $this->listGenerator->createAlphabeticalList($artists, 'name');
-        return view('app.list')->with('list', $list);
+        return view('app.artists')->with('list', $list);
+    }
+
+    /**
+     * @return \Illumiante\Http\Response
+     */
+    public function listAlbums()
+    {
+        $albums = $this->albumRepository->getSorted('title', 'asc', 20);
+        return view('app.albums')->with('albums', $albums);
     }
 }

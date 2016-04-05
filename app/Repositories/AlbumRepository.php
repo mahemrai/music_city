@@ -12,6 +12,45 @@ use MusicCity\Track;
 class AlbumRepository implements RepositoryInterface
 {
     /**
+     * @param  int $id
+     * @return \MusicCity\Album
+     */
+    public function getById($id)
+    {
+        return Album::find($id);
+    }
+
+    /**
+     * @param  int $value
+     * @param  string $field
+     * @return \MusicCity\Album
+     */
+    public function getByField($value, $field)
+    {
+        return Album::where($field, $value)->first();
+    }
+
+    /**
+     * @param  string|null $field
+     * @param  string|null $orderOption
+     * @param  int|null $limit
+     * @param  boolean $paginate
+     * @return mixed
+     */
+    public function getSorted($field = null, $orderOption = null, $limit = null, $paginate = false)
+    {
+        if (is_null($limit)) {
+            return Album::orderBy($field, $orderOption)->get();
+        }
+
+        if ($paginate) {
+            return Album::orderBy($field, $orderOption)->paginate($limit);
+        }
+
+        return Album::orderBy($field, $orderOption)->take($limit)->get();
+    }
+
+    /**
      * @param  object $data
      * @param  int $id
      * @return boolean

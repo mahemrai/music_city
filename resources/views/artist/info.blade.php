@@ -4,14 +4,12 @@
 
     <div class="col-xs-12">
         <div class="row">
-            <div class="col-xs-12">
+            <div class="col-xs-6">
+                <div class="col-xs-6"><h2>{{ $data['artist']->name }}</h2></div>
                 <div class="col-xs-6">
-                    <div class="col-xs-6"><h2>{{ $data['artist']->name }}</h2></div>
-                    <div class="col-xs-6">
-                        {!! Form::open(['method' => 'DELETE', 'url' => '/artists/' . $data['artist']->id . '/delete']) !!}
-                            {!! Form::submit('Delete', ['class' => 'btn btn-default']) !!}
-                        {!! Form::close() !!}
-                    </div>
+                    {!! Form::open(['method' => 'DELETE', 'url' => '/artists/' . $data['artist']->id . '/delete']) !!}
+                        {!! Form::submit('Delete', ['class' => 'btn btn-default']) !!}
+                    {!! Form::close() !!}
                 </div>
             </div>
         </div>
@@ -49,24 +47,29 @@
         </div>
 
         <div class="row">
-            <div class="col-xs-12">
+            <div class="col-xs-6">
                 <h3>Similar Artists</h3>
-                @foreach ($data['similar']->similarartists->artist as $artist)
-                    <p>{{ $artist->name }}</p>
+                @foreach ($data['similar'] as $key => $artist)
+                    @if ($key < 10)
+                        <p>{{ $artist->name }}</p>
+                    @endif
                 @endforeach
             </div>
-        </div>
 
-        <div class="row">
-            <div class="col-xs-12">
+            <div class="col-xs-6">
                 <h3>Upcoming Events</h3>
-                @foreach ($data['events']->results->event as $event)
-                    <p>
-                        {{ $event->displayName }}<br>
-                        {{ $event->start->date }}, {{ $event->start->time }}<br>
-                        {{ $event->location->city }}
-                    </p>
-                @endforeach
+                @if (empty($data['events']))
+                    <p>There are no events.</p>
+                @else
+                    @foreach ($data['events'] as $event)
+                        <p>
+                            {{ $event->displayName }}<br>
+                            {{ $event->start->date }}
+                            @if (isset($event->start->time)), {{ $event->start->time }} @endif<br>
+                            {{ $event->location->city }}
+                        </p>
+                    @endforeach
+                @endif
             </div>
         </div>
     </div>

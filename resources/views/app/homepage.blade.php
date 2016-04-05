@@ -24,6 +24,7 @@
                         <div class="col-xs-3">
                             <img class="img-circle" src="{{ $artist->thumb }}">
                             <p>{{ $artist->name }}</p>
+                            <p><a href="/artists/{{ $artist->id }}">View</a></p>
                             <p><a href="/artists/{{ $artist->discogsId }}/albums">Find Albums</a></p>
                         </div>
                     @endforeach
@@ -41,7 +42,7 @@
                         <div class="col-xs-3">
                             <img class="img-circle" src="{{ $record->thumb }}">
                             <p>{{ $record->title }}</p>
-                            <p>View</p>
+                            <p><a href="/artists/{{ $record->artist_id }}/albums/{{ $record->id }}">View</a></p>
                         </div>
                     @endforeach
                 @endif

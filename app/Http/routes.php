@@ -23,9 +23,13 @@ Route::delete('artists/{artistId}/delete', 'App\ArtistController@deleteArtist');
 Route::get('artists/{artistId}', 'App\ArtistController@artistInfo');
 Route::post('artists/{artistId}', 'App\ArtistController@addArtist');
 Route::get('artists/{artistId}/albums', 'App\AppController@findAlbums');
+Route::get('artists/{artistId}/albums/{albumId}', 'App\AlbumController@albumInfo');
 Route::post('artists/{artistId}/albums/{albumId}', 'App\AlbumController@addAlbum');
 
+Route::get('albums', 'App\AppController@listAlbums');
+
 Route::get('api/artist/{artist}/similar', 'App\LastfmController@similarArtists');
+Route::patch('artists/{artistId}/favourite', 'Api\ArtistController@markAsFavourite');
 
 /*
 |--------------------------------------------------------------------------

@@ -1,12 +1,12 @@
 <?php
 namespace MusicCity\Http\Controllers\App;
 
-use Redis;
+use Cache;
+
 use MusicCity\Http\Controllers\Controller;
 use MusicCity\Services\Clients\DiscogsClient;
 use MusicCity\Services\Clients\LastfmClient;
 use MusicCity\Services\Clients\SongkickClient;
-use MusicCity\Artist;
 use MusicCity\Repositories\ArtistRepository;
 
 use Illuminate\Http\Request;
@@ -63,10 +63,10 @@ class ArtistController extends Controller
      */
     public function addArtist($artistId)
     {
-        $data = Redis::get('info:artist:' . $artistId);
+        $data = Cache::get('info:artist:' . $artistId);
         if (is_null($data)) {
-            $data = $this->client->getArtistInfo((int) $artistId);
-            (!$data) ?: Redis::set('info:artist:' . $artistId, $data);
+            $data = $this->discogsClient->getArtistInfo((int) $artistId);
+            (!$data) ?: Cache::put('info:artist:' . $artistId, $data, 60);
         }
 
         $data = json_decode($data);
@@ -84,25 +84,30 @@ class ArtistController extends Controller
      */
     public function artistInfo($artistId)
     {
-        $artist = Artist::find($artistId);
+        $artist = $this->artistRepository->getById($artistId);
 
-        $similarArtists = Redis::get('similar:artist:' . $artistId);
+        $similarArtists = Cache::get('similar:artist:' . $artistId);
         if (is_null($similarArtists)) {
             $similarArtists = $this->lastfmClient->getSimilarArtists($artist->name);
-            (!$similarArtists) ?: Redis::set('similar:artist:' . $artistId, $similarArtists);
+            (!$similarArtists) ?: Cache::put('similar:artist:' . $artistId, $similarArtists, 60);
         }
 
         $events = $this->songkickClient->getArtistEvents($artist->name);
+        $similar = json_decode($similarArtists);
+        $events = (json_decode($events)->resultsPage->totalEntries == 0) ? 
+                    '' : json_decode($events)->resultsPage->results->event;
+
         $data = array(
             'artist'  => $artist,
-            'similar' => json_decode($similarArtists),
-            'events'  => json_decode($events)->resultsPage
+            'similar' => array_slice($similar->similarartists->artist, 0, 9),    //return only 10 items from the array
+            'events'  => $events
         );
         return view('artist.info')->with('data', $data);
     }
 
     /**
-     * @param int $artistId
+     * @param  int $artistId
+     * @return \Illuminate\Http\Response
      */
     public function deleteArtist($artistId)
     {

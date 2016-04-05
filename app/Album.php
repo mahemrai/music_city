@@ -23,6 +23,9 @@ class Album extends Model
         'rating'
     );
 
+    /**
+     * @return boolean
+     */
     public static function boot()
     {
         parent::boot();
@@ -38,7 +41,15 @@ class Album extends Model
     }
 
     /**
-     * @return \MusicCity\Track
+     * @return \MusicCity\Artist
+     */
+    public function artist()
+    {
+        return $this->belongsTo('MusicCity\Artist');
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Collection
      */
     public function tracks()
     {
